@@ -7,7 +7,7 @@
     <ProjectGuid>{26DC118B-DB3A-4469-91C5-FCDDF5C152B5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-	<!-- Change the name of the mod here -->
+    <!-- Change the name of the mod here -->
     <RootNamespace>CarsExtended</RootNamespace>
     <AssemblyName>$(RootNamespace)</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -34,7 +34,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
-  	<!-- Change this path to your local variant -->
+    <!-- Change this path to your local variant -->
     <GamePath>C:\Program Files (x86)\Steam\steamapps\common\artofrally</GamePath>
     <GameLibPath>$([System.IO.Path]::Combine($(GamePath), artofrally_Data\Managed))</GameLibPath>
     <GameModPath>$([System.IO.Path]::Combine($(GamePath), Mods\$(AssemblyName)))</GameModPath>
@@ -89,7 +89,14 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="**\*.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
+    <Compile Include="Patches.cs" />
+    <Compile Include="Patches\CarInjector.cs" />
+    <Compile Include="Patches\CarsManager.cs" />
+    <Compile Include="CarSpawner.cs" />
+    <Compile Include="Patches\GhostManager_Patch.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="CleanFolder" AfterTargets="BeforeBuild">
