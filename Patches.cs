@@ -1,6 +1,6 @@
 using HarmonyLib;
 
-namespace ModBase
+namespace CarsExtended
 {
 	// Patch model
 	// [HarmonyPatch(typeof(), nameof())]

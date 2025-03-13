@@ -3,7 +3,7 @@ using UnityModManagerNet;
 
 using static UnityModManagerNet.UnityModManager;
 
-namespace ModBase
+namespace CarsExtended
 {
     public class Settings : ModSettings, IDrawable
     {

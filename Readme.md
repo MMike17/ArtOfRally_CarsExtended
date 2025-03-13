@@ -1,8 +1,6 @@
-﻿# Mod Base
+﻿# Cars Extended
 
-<!-- Search and replace <modName> with the name of your mod -->
-
-[![](https://img.shields.io/github/v/release/MMike17/<modName>?label=Download)](https://github.com/MMike17/<modName>/releases/latest)
+[![](https://img.shields.io/github/v/release/MMike17/ArtOfRally_CarsExtended?label=Download)](https://github.com/MMike17/ArtOfRally_CarsExtended/releases/latest)
 ![](https://img.shields.io/badge/Game%20Version-v1.5.5-blue)
 
 A mod for Art of Rally that [...]
@@ -24,8 +22,8 @@ A mod for Art of Rally that [...]
 
 ## Requirements
 
-This mod requires the "..." that you can find [here](https://github.com/MMike17/<modName>).\
-Latest release [![](https://img.shields.io/github/v/release/MMike17/?label=Real%20car%20names)](https://github.com/MMike17/<modName>/releases/latest)
+This mod requires the "..." that you can find [here](https://github.com/MMike17/CarsExtended).\
+Latest release [![](https://img.shields.io/github/v/release/MMike17/?label=Real%20car%20names)](https://github.com/MMike17/CarsExtended/releases/latest)
 
 ## Usage
 
@@ -45,7 +43,7 @@ Disabling the mod in the manager will [...] by default.
 
 Follow the [installation guide](https://www.nexusmods.com/site/mods/21/) of
 the Unity Mod Manager.\
-Then simply download the [latest release](https://github.com/MMike17/<modName>/releases/latest)
+Then simply download the [latest release](https://github.com/MMike17/CarsExtended/releases/latest)
 and drop it into the mod manager's mods page.
 
 ## Showcase
