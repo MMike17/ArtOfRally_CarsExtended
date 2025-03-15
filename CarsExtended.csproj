@@ -63,6 +63,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameLibPath)\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\artofrally\artofrally_Data\Managed\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>$(GameLibPath)\UnityEngine.CoreModule.dll</HintPath>
@@ -92,8 +95,7 @@
     <Compile Include="Main.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
     <Compile Include="Patches.cs" />
-    <Compile Include="Patches\CarInjector.cs" />
-    <Compile Include="Patches\CarsManager.cs" />
+    <Compile Include="ExtraCarManager.cs" />
     <Compile Include="CarSpawner.cs" />
     <Compile Include="Patches\GhostManager_Patch.cs" />
     <Compile Include="Settings.cs" />
