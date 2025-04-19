@@ -8,7 +8,7 @@ namespace CarsExtended
     public class Settings : ModSettings, IDrawable
     {
         // [Draw(DrawType.)]
-        
+
         [Header("Debug")]
         [Draw(DrawType.Toggle)]
         public bool showMarkers;

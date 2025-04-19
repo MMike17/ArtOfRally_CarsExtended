@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -11,10 +12,10 @@ namespace CarsExtended
     public static class ExtraCarManager
     {
         private static List<Car> injectedCars = new List<Car>();
-        private static Dictionary<Car, (AssetBundle, string)> carBundles = new Dictionary<Car, (AssetBundle, string)>();
+        private static Dictionary<Car, AssetBundle> carBundles = new Dictionary<Car, AssetBundle>();
 
         /// <summary>This will inject a new car in the game, please call this after CarManager.Init or as close as possible.</summary>
-        public static void InjectCar(Car car, ModEntry sourceMod, string assetBundlePath, string prefabPath)
+        public static void InjectCar(Car car, ModEntry sourceMod, string assetBundleName)
         {
             if (injectedCars.Contains(car))
             {
@@ -25,31 +26,24 @@ namespace CarsExtended
             GetCarListFromClass(car.carClass)?.Add(car);
 
             // cache car and asset bundle
-            string[] frags = assetBundlePath.Split(Path.DirectorySeparatorChar);
-            string assetBundleName = frags[frags.Length - 1];
             AssetBundle selectedBundle = null;
 
-            foreach (KeyValuePair<Car, (AssetBundle, string)> pair in carBundles)
+            foreach (KeyValuePair<Car, AssetBundle> pair in carBundles)
             {
-                if (pair.Value.Item1.name == assetBundleName)
+                if (pair.Value.name == assetBundleName)
                 {
-                    selectedBundle = pair.Value.Item1;
+                    selectedBundle = pair.Value;
                     break;
                 }
             }
 
             if (selectedBundle == null)
-                selectedBundle = AssetBundle.LoadFromFile(Path.Combine(sourceMod.Path, assetBundlePath));
+                selectedBundle = AssetBundle.LoadFromFile(Path.Combine(sourceMod.Path, assetBundleName));
 
-            carBundles.Add(car, (selectedBundle, prefabPath));
+            carBundles.Add(car, selectedBundle);
             injectedCars.Add(car);
 
             Main.Log("Injected car \"" + car.name + "\" in the game.");
-
-            // debug
-            foreach (Car carCar in CarManager.SixtiesCarList)
-                Main.Log(carCar.name + " : " + (IsCarInjected(carCar) ? "Injected" : "OG"));
-            // debug
         }
 
         private static List<Car> GetCarListFromClass(CarClass carClass)
@@ -93,6 +87,8 @@ namespace CarsExtended
 
         internal static bool IsCarInjected(Car car) => injectedCars.Contains(car);
 
+        internal static bool IsCarInjected(string carPrefabName) => injectedCars.Find(item => item.prefabName == carPrefabName) != null;
+
         internal static GameObject LoadBundleCar(Car car)
         {
             if (!injectedCars.Contains(car))
@@ -101,8 +97,13 @@ namespace CarsExtended
                 return null;
             }
 
-            (AssetBundle bundle, string prefabPath) bundleInfo = carBundles[car];
-            return bundleInfo.bundle.LoadAsset<GameObject>(bundleInfo.prefabPath);
+            return carBundles[car].LoadAsset<GameObject>(car.prefabName);
+        }
+
+        internal static GameObject LoadBundleCar(string carPrefabName)
+        {
+            Car selectedCar = injectedCars.Find(item => item.prefabName == carPrefabName);
+            return LoadBundleCar(selectedCar);
         }
     }
 }

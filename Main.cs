@@ -79,7 +79,7 @@ namespace CarsExtended
         }
 
         /// <summary>BindingFlags.NonPrivate is implicit</summary>
-        public static void SetField<T, U>(U source, string fieldName, BindingFlags flags, object value)
+        public static void SetField<U>(U source, string fieldName, BindingFlags flags, object value)
         {
             FieldInfo info = source.GetType().GetField(fieldName, flags | BindingFlags.NonPublic);
 
