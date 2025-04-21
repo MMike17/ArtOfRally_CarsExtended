@@ -88,18 +88,18 @@ namespace CarsExtended
 
         internal static bool IsCarInjected(string carPrefabName) => injectedCars.Find(item => item.prefabName == carPrefabName) != null;
 
-        internal static GameObject LoadBundleCar(Car car)
+        internal static (CarInfos, GameObject) LoadBundleCar(Car car)
         {
             if (!injectedCars.Contains(car))
             {
                 Main.Error("The car you're trying to load isn't part of the injected cars (are you hijacking an original \"Resources.Load\" call ?)");
-                return null;
+                return (null, null);
             }
 
-            return carBundles[car].Item2.LoadAsset<GameObject>(car.prefabName);
+            return (carBundles[car].Item1, carBundles[car].Item2.LoadAsset<GameObject>(car.prefabName));
         }
 
-        internal static GameObject LoadBundleCar(string carPrefabName)
+        internal static (CarInfos, GameObject) LoadBundleCar(string carPrefabName)
         {
             Car selectedCar = injectedCars.Find(item => item.prefabName == carPrefabName);
             return LoadBundleCar(selectedCar);

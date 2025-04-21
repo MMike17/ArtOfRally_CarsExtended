@@ -53,8 +53,9 @@ namespace CarsExtended
             else
                 Main.Error("No spawn position found");
 
-            __result = Object.Instantiate(ExtraCarManager.LoadBundleCar(carPrefabName), position, rotation) as GameObject;
-            CarSpawner.ConfigureCar(__result, GameModeManager.GetSeasonDataCurrentGameMode().SelectedCar);
+            (CarInfos infos, GameObject carPrefab) carData = ExtraCarManager.LoadBundleCar(carPrefabName);
+            __result = Object.Instantiate(carData.carPrefab, position, rotation) as GameObject;
+            CarSpawner.ConfigureCar(__result, carData.infos);
 
             Main.Log("Car \"" + carPrefabName + "\" is ready for play");
             return false;
