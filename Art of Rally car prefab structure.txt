@@ -1,0 +1,45 @@
+Art of Rally car prefab structure
+
+Prefab root must be an empty GameObject called "Car_" + [car name without spaces]
+[O] - Optional objects
+
+Body (contains 3D models as children / not the wheels)
+Collider (MeshCollider with collider for the body)
+Wing_Back (where you would put a wing)
+Wing_Front (at intersection between front and top of front bumper)
+Wheels
+    WheelFL (center of each wheel)
+    WheelFR (center of each wheel)
+    WheelRL (center of each wheel)
+    WheelRR (center of each wheel)
+        WheelRR
+            BrakeRotorRR (brake disc model)
+            w(number of wheel) (wheel model)
+        Caliper
+            brake caliper (model)
+PrefabSpawns
+    Lights
+        Brakelights
+            BrakeLight L (empty object just in front of breaklight)
+            BrakeLight R (empty object just in front of breaklight)
+        Headlights
+            Headlights (pos of the light cone / slightly angled down in front of windshield above bonnet)
+            AuxHeadlights [O]
+                Light1 (broken version ?)
+                    headlight_stick_left1 (copy of the light bulbs models)
+                headlight_stick_left1 (light bulbs models)
+                headlight_stick_right1 (light bulbs models)
+            StockHeadlights
+                headlights_stick_front (light bulbs models)
+        Backfire
+            Backfire L (pos where backfire effect spawns / up is forward)
+        Nightlight (1/1.5 above the car)
+    Particles
+        Dust (where dust spawns / center of car slightly back)
+        Exhaust1 (where exhaust effect spawns)
+        EngineSteam (where engine fires spawns)
+        Ambient Effects (above engine)
+    ReverbZones (center of car)
+CheekyHashtag (not available sorry)
+CameraTarget (pos at general center)
+Shadow (Cube / managed by script / set scale to 0 ?)
