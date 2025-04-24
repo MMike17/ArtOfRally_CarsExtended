@@ -10,14 +10,23 @@ namespace CarsExtended
     {
         const float SHADOW_EXPANSION = 2;
 
+        internal static CarInfos lastSpawned;
+
         // TODO : How do I add cars to the car selection menu ?
+
+        // TODO : Do the "AddComponent" here => configure the components on their respective Awake/Start (add flag to detect if we need to configure or not)
 
         public static void ConfigureCar(GameObject carObj, CarInfos carInfos)
         {
-            // TODO : why the hell is the car spawning looping ?
+            Main.Log("Configuring \"" + carInfos.data.name + "\"");
 
-            Main.Log("Starting car configuration");
+            // TODO : why the hell is the car spawning looping ?
+            // Now it crashes...much better
+            // Loops on this "Initing StageManager"
+
             carObj.SetActive(false);
+            carObj.layer = LayerMask.NameToLayer(Layers.CAR);
+            carObj.tag = Tags.CAR;
 
             Setup setup = carObj.AddComponent<Setup>();
             setup.carClass = carInfos.data.carClass;
@@ -50,24 +59,29 @@ namespace CarsExtended
             SetupSoundController(carObj.AddComponent<SoundController>(), sourceCarPrefab.GetComponent<SoundController>());
             SetupWings(carObj);
 
-            Resources.UnloadAsset(sourceCarPrefab);
+            Resources.UnloadUnusedAssets();
+            lastSpawned = carInfos; // TEST
+
             carObj.SetActive(true);
+
+            // TEST
+            //Main.InvokeMethod(setup, "Awake", System.Reflection.BindingFlags.Instance, null);
+            //Main.InvokeMethod(setup, "Start", System.Reflection.BindingFlags.Instance, null);
+
+            // TEST
+            //carObj.SendMessage("Awake", SendMessageOptions.DontRequireReceiver);
+            //carObj.SendMessage("Start", SendMessageOptions.DontRequireReceiver);
         }
 
-        private static Axles SetupAxles(Axles axles, CarInfos carInfos)
+        internal static Axles SetupAxles(Axles axles, CarInfos carInfos)
         {
             Transform wheelsRoot = axles.transform.Find("Wheels");
 
-            axles.frontAxle = new Axle()
-            {
-                rightWheel = SetupWheel(wheelsRoot.Find("WheelFR").gameObject.AddComponent<Wheel>(), carInfos),
-                leftWheel = SetupWheel(wheelsRoot.Find("WheelFL").gameObject.AddComponent<Wheel>(), carInfos)
-            };
-            axles.rearAxle = new Axle()
-            {
-                rightWheel = SetupWheel(wheelsRoot.Find("WheelRR").gameObject.AddComponent<Wheel>(), carInfos),
-                leftWheel = SetupWheel(wheelsRoot.Find("WheelRL").gameObject.AddComponent<Wheel>(), carInfos)
-            };
+            axles.frontAxle.rightWheel = SetupWheel(wheelsRoot.Find("WheelFR").gameObject.AddComponent<Wheel>(), carInfos);
+            axles.frontAxle.leftWheel = SetupWheel(wheelsRoot.Find("WheelFL").gameObject.AddComponent<Wheel>(), carInfos);
+
+            axles.rearAxle.rightWheel = SetupWheel(wheelsRoot.Find("WheelRR").gameObject.AddComponent<Wheel>(), carInfos);
+            axles.rearAxle.leftWheel = SetupWheel(wheelsRoot.Find("WheelRL").gameObject.AddComponent<Wheel>(), carInfos);
 
             if (wheelsRoot.Find("WheelRRL") != null)
             {
@@ -81,6 +95,7 @@ namespace CarsExtended
                 };
             }
 
+            axles.SetWheels();
             return axles;
         }
 
@@ -97,8 +112,8 @@ namespace CarsExtended
         {
             BrakeEffects brakeEffects = brakelightsTransform.gameObject.AddComponent<BrakeEffects>();
 
-            brakeEffects.RightBrakeLightTransform = brakelightsTransform.Find("BreakLight R");
-            brakeEffects.LeftBrakeLightTransform = brakelightsTransform.Find("BreakLight L");
+            brakeEffects.RightBrakeLightTransform = brakelightsTransform.Find("BrakeLight R");
+            brakeEffects.LeftBrakeLightTransform = brakelightsTransform.Find("BrakeLight L");
         }
 
         private static void SetupCollider(GameObject carObj)
@@ -106,6 +121,7 @@ namespace CarsExtended
             TouchReactCollider touchCollider = carObj.transform.Find("Collider").gameObject.AddComponent<TouchReactCollider>();
             touchCollider.AddChildColliders = false;
             touchCollider.ColliderScale = 1.6f;
+            touchCollider.tag = Tags.CAR;
         }
 
         private static void SetupDrivetrain(Drivetrain drivetrain, CarInfos carInfos)
@@ -121,6 +137,11 @@ namespace CarsExtended
         {
             HeadlightManager headlightManager = lightsTransform.Find("Headlights").gameObject.AddComponent<HeadlightManager>();
             headlightManager.HeadlightPosition = headlightManager.transform.Find("Headlights");
+
+            Transform auxLightsRoot = headlightManager.transform.Find("AuxHeadlights");
+
+            for (int i = 0; i < auxLightsRoot.childCount - 2; i++)
+                auxLightsRoot.Find("Light" + (i + 1)).tag = Tags.CAR_BREAKABLE_OBJECT;
         }
 
         private static void SetupParticleManager(GameObject carObj, Transform lightsTransform, Transform brakelightsTransform)
@@ -144,7 +165,10 @@ namespace CarsExtended
         private static void SetupRenderers(GameObject carObj, CarInfos carInfos)
         {
             // TODO : How can I setup all the renderers ?
-            // TODO : How does the game load liveries ?
+            // TODO : How does the game load liveries and setup cars ?
+            // Maybe that's what crashing the game...
+
+            // TODO : Material with "BrakeLightEmissive" in name is required for brake lights (check in scene)
         }
 
         // force setup rigidbody because I don't trust humans
