@@ -17,15 +17,7 @@ namespace CarsExtended
             //    return true;
 
             // TEST
-            Main.Log(
-                "__instance : " + (__instance != null) + " / " +
-                "isForwardStage : " + isForwardStage + " / " +
-                "carPrefabName : " + carPrefabName + " / " +
-                "optionalSpawnPosition : " + (optionalSpawnPosition != null) +
-                "__result : " + (__result != null)
-            );
-
-            carPrefabName = "TestPrefab";
+            carPrefabName = "Car_Test";
             //return true;
             // TEST
 
