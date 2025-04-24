@@ -105,6 +105,7 @@
     <Compile Include="Patches.cs" />
     <Compile Include="ExtraCarManager.cs" />
     <Compile Include="CarSpawner.cs" />
+    <Compile Include="Patches\CarPatcher.cs" />
     <Compile Include="Patches\GhostManager_Patch.cs" />
     <Compile Include="Patches\PlayerManager_Patch.cs" />
     <Compile Include="Settings.cs" />
