@@ -13,9 +13,13 @@ namespace CarsExtended
     {
         public static bool enabled { get; private set; }
 
+        /// <summary>This is provided by UnityModManager to log messages to the console</summary>
         public static ModEntry.ModLogger Logger;
+        /// <summary>Main access to this mod's settings</summary>
         public static Settings settings;
-        
+        /// <summary>This will be called when the mod is toggles on/off</summary>
+        public static event Action<bool> OnToggle;
+
         static List<GameObject> markers;
         static Material markerMat;
 
@@ -30,28 +34,32 @@ namespace CarsExtended
             harmony.PatchAll();
 
             // hook in mod manager event
-            modEntry.OnToggle = OnToggle;
-            modEntry.OnGUI = (entry) => settings.Draw(entry);
-            modEntry.OnSaveGUI = (entry) => settings.Save(entry);
+            modEntry.OnToggle = OnToggleEvent;
+            modEntry.OnGUI = settings.Draw;
+            modEntry.OnSaveGUI = settings.Save;
 
             markers = new List<GameObject>();
             return true;
         }
 
-        static bool OnToggle(ModEntry modEntry, bool state)
+        static bool OnToggleEvent(ModEntry modEntry, bool state)
         {
             enabled = state;
+            OnToggle?.Invoke(state);
             return true;
         }
 
+        /// <summary>Logs a message to the console</summary>
         public static void Log(string message)
         {
-            if(!settings.disableInfoLogs)
+            if (!settings.disableInfoLogs)
                 Logger.Log(message);
         }
 
+        /// <summary>Logs an error message to the console</summary>
         public static void Error(string message) => Logger.Error(message);
 
+        /// <summary>Use this to log possible execution errors to the console</summary>
         public static void Try(Action callback)
         {
             try
@@ -64,10 +72,10 @@ namespace CarsExtended
             }
         }
 
-        /// <summary>BindingFlags.NonPrivate is implicit</summary>
+        /// <summary>BindingFlags.NonPrivate is implicit / source can be null</summary>
         public static T GetField<T, U>(U source, string fieldName, BindingFlags flags)
         {
-            FieldInfo info = source.GetType().GetField(fieldName, flags | BindingFlags.NonPublic);
+            FieldInfo info = typeof(U).GetField(fieldName, flags | BindingFlags.NonPublic);
 
             if (info == null)
             {
@@ -78,10 +86,10 @@ namespace CarsExtended
             return (T)info.GetValue(source);
         }
 
-        /// <summary>BindingFlags.NonPrivate is implicit</summary>
-        public static void SetField<U>(U source, string fieldName, BindingFlags flags, object value)
+        /// <summary>BindingFlags.NonPrivate is implicit / source can be null</summary>
+        public static void SetField<T>(T source, string fieldName, BindingFlags flags, object value)
         {
-            FieldInfo info = source.GetType().GetField(fieldName, flags | BindingFlags.NonPublic);
+            FieldInfo info = typeof(T).GetField(fieldName, flags | BindingFlags.NonPublic);
 
             if (info == null)
             {
@@ -92,10 +100,10 @@ namespace CarsExtended
             info.SetValue(source, value);
         }
 
-        /// <summary>BindingFlags.NonPrivate is implicit</summary>
+        /// <summary>BindingFlags.NonPrivate is implicit / source can be null</summary>
         public static void InvokeMethod<T>(T source, string methodName, BindingFlags flags, object[] args)
         {
-            MethodInfo info = source.GetType().GetMethod(methodName, flags | BindingFlags.NonPublic);
+            MethodInfo info = typeof(T).GetMethod(methodName, flags | BindingFlags.NonPublic);
 
             if (info == null)
             {
