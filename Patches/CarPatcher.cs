@@ -4,27 +4,29 @@ using HarmonyLib;
 using UnityEngine;
 
 using static Drivetrain;
-using Object = UnityEngine.Object;
 
 namespace CarsExtended.Patches
 {
     internal static class CarPatcher
     {
-        //
-
-        internal static bool CheckCarInjected(Object obj)
+        internal static bool CheckCarInjected(Component obj)
         {
-            string carPrefabName = obj.name.Replace("(Clone)", "");
-            bool check = ExtraCarManager.IsCarInjected(carPrefabName);
+            bool check = ChecKName(obj);
 
-            // TEST
-            check = true;
-            // TEST
+            // check parent
+            if (!check)
+                check = ChecKName(obj.GetComponentInParent<Setup>());
 
             if (check)
                 Main.Log("Configuring " + obj.GetType().Name + " component");
 
             return check;
+
+            bool ChecKName(Component component)
+            {
+                string carPrefabName = component.name.Replace("(Clone)", "");
+                return ExtraCarManager.IsCarInjected(carPrefabName);
+            }
         }
     }
 
@@ -68,6 +70,8 @@ namespace CarsExtended.Patches
                     }
                 };
             }
+
+            CarSpawner.SetupShadow(__instance);
         }
 
         private static Wheel SetupWheel(Wheel wheel, CarInfos carInfos)
@@ -88,7 +92,7 @@ namespace CarsExtended.Patches
             if (!CarPatcher.CheckCarInjected(__instance))
                 return;
 
-            BrakeEffects brakeEffects = CarSpawner.brakelightsTransform.gameObject.AddComponent<BrakeEffects>();
+            BrakeEffects brakeEffects = CarSpawner.brakelightsTransform.GetComponent<BrakeEffects>();
 
             brakeEffects.RightBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight R");
             brakeEffects.LeftBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight L");
