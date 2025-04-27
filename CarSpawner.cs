@@ -17,11 +17,7 @@ namespace CarsExtended
 
         internal static void ConfigureCar(GameObject carObj, CarInfos carInfos)
         {
-            Main.Log("Configuring \"" + carInfos.data.name + "\"");
-
-            // TODO : why the hell is the car spawning looping ?
-            // Now it crashes...much better
-            // Loops on this "Initing StageManager"
+            Main.Log("Started configuring \"" + carInfos.data.name + "\"");
 
             carObj.SetActive(false);
             carObj.layer = LayerMask.NameToLayer(Layers.CAR);
@@ -33,37 +29,40 @@ namespace CarsExtended
             brakelightsTransform = lightsTransform.Find("Brakelights");
             sourceCarPrefab = Resources.Load<GameObject>("Prefabs/Cars/" + carInfos.soundSourcePrefabName + "/" + carInfos.soundSourcePrefabName);
 
-            // Add components
-            carObj.AddComponent<Setup>();
-            carObj.AddComponent<AerodynamicResistance>();
-            carObj.AddComponent<Arcader>();
-            carObj.AddComponent<AxisCarController>();
-            carObj.AddComponent<PlayerCollider>();
-            carObj.AddComponent<ResetCar>();
-            carObj.AddComponent<SkidmarksManager>();
-            carObj.AddComponent<Axles>();
-            carObj.AddComponent<CarDynamics>();
-            carObj.AddComponent<Drivetrain>();
+            // Add Setup required components
+            CheckAddComponent<Drivetrain>(carObj);
+            SetupRigidbody(CheckAddComponent<Rigidbody>(carObj));
+            CheckAddComponent<AxisCarController>(carObj);
+            CheckAddComponent<Axles>(carObj);
+            CheckAddComponent<BrakeEffects>(brakelightsTransform.gameObject);
+            CheckAddComponent<CarDynamics>(carObj);
+            CheckAddComponent<SoundController>(carObj);
+            CheckAddComponent<Arcader>(carObj);
+            CheckAddComponent<AerodynamicResistance>(carObj);
+            CheckAddComponent<Wing>(carObj.transform.Find("Wing_Front").gameObject);
+            CheckAddComponent<Wing>(carObj.transform.Find("Wing_Back").gameObject);
 
-            carObj.transform.Find("Collider").gameObject.AddComponent<TouchReactCollider>();
-            lightsTransform.Find("Headlights").gameObject.AddComponent<HeadlightManager>();
-            carObj.transform.Find("PrefabSpawns").gameObject.AddComponent<ParticleManager>();
-            carObj.transform.Find("Wing_Front").gameObject.AddComponent<Wing>();
-            carObj.transform.Find("Wing_Back").gameObject.AddComponent<Wing>();
+            // Add additional components
+            CheckAddComponent<PlayerCollider>(carObj);
+            CheckAddComponent<ResetCar>(carObj);
+            CheckAddComponent<SkidmarksManager>(carObj);
+            CheckAddComponent<PlayerVibrator>(carObj);
+            CheckAddComponent<TouchReactCollider>(carObj.transform.Find("Collider").gameObject);
+            CheckAddComponent<HeadlightManager>(lightsTransform.Find("Headlights").gameObject);
+            CheckAddComponent<ParticleManager>(carObj.transform.Find("PrefabSpawns").gameObject);
 
-            // unique setups
+            CheckAddComponent<Setup>(carObj);
             SetupRenderers(carObj, carInfos);
-            SetupRigidbody(carObj.GetComponent<Rigidbody>() ?? carObj.AddComponent<Rigidbody>());
-            SetupShadow(carObj, sourceCarPrefab);
 
             carObj.SetActive(true);
         }
 
+        private static T CheckAddComponent<T>(GameObject obj) where T : Component => obj.GetComponent<T>() ?? obj.AddComponent<T>();
+
         private static void SetupRenderers(GameObject carObj, CarInfos carInfos)
         {
-            // TODO : How can I setup all the renderers ?
             // TODO : How does the game load liveries and setup cars ?
-            // Maybe that's what crashing the game...
+            // TODO : How can I setup all the renderers ?
 
             // TODO : Material with "BrakeLightEmissive" in name is required for brake lights (check in scene)
         }
@@ -74,13 +73,14 @@ namespace CarsExtended
             rigidbody.drag = 0;
             rigidbody.angularDrag = 0;
             rigidbody.useGravity = true;
-            rigidbody.isKinematic = false;
+            rigidbody.isKinematic = true;
             rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
             rigidbody.collisionDetectionMode = CollisionDetectionMode.Discrete;
             rigidbody.constraints = RigidbodyConstraints.None;
         }
 
-        private static void SetupShadow(GameObject carObj, GameObject sourceCarPrefab)
+        // This is called once wheels are setup
+        internal static void SetupShadow(Component carObj)
         {
             Transform shadowTransform = carObj.transform.Find("Shadow");
             Renderer renderer = shadowTransform.GetComponent<Renderer>();
