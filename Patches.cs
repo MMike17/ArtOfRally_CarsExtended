@@ -1,4 +1,13 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using HarmonyLib;
+using I2.Loc;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+
+// TODO : How do I remove injected cars when I turn the mod off ?
+// Remove cars from selection menu / remove cars from game car list (doesn't that break selection indexes ?)
 
 namespace CarsExtended
 {
@@ -24,24 +33,4 @@ namespace CarsExtended
     // 		//
     // 	}
     // }
-
-    // TEST
-    [HarmonyPatch(typeof(Setup), "Awake")]
-    static class Setup_Awake_Patch
-    {
-        static void Prefix()
-        {
-            Main.Log("Setup Awake");
-        }
-    }
-
-    [HarmonyPatch(typeof(Setup), "Start")]
-    static class Setup_Start_Patch
-    {
-        static void Prefix()
-        {
-            Main.Log("Setup Start");
-        }
-    }
-    // TEST
 }

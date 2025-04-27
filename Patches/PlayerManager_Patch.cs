@@ -3,8 +3,6 @@ using HarmonyLib;
 using UnityEngine;
 
 // TODO : Change class name for something more descriptive
-
-// Here we're overriding the car spawning when spawning the player's car
 namespace CarsExtended
 {
     [HarmonyPatch(typeof(PlayerManager), nameof(PlayerManager.CreateCar))]
@@ -21,8 +19,7 @@ namespace CarsExtended
             //return true;
             // TEST
 
-            Main.Log("Overriding prefab loading to spawn car \"" + carPrefabName + "\"");
-
+            // This is a modified copy of the OG code
             Vector3 position = Vector3.zero;
             Quaternion rotation = Quaternion.identity;
             GameObject spawnPoint;
@@ -39,17 +36,16 @@ namespace CarsExtended
                 position = spawnPoint.transform.position + Vector3.up;
                 rotation = spawnPoint.transform.rotation;
 
-                Main.SetField<PlayerManager>(__instance, "prefabSpawnPos", BindingFlags.Instance, position);
-                Main.SetField<PlayerManager>(__instance, "prefabSpawnRotation", BindingFlags.Instance, rotation);
+                Main.SetField(__instance, "prefabSpawnPos", BindingFlags.Instance, position);
+                Main.SetField(__instance, "prefabSpawnRotation", BindingFlags.Instance, rotation);
             }
             else
                 Main.Error("No spawn position found");
 
             (CarInfos infos, GameObject carPrefab) carData = ExtraCarManager.LoadBundleCar(carPrefabName);
-            __result = Object.Instantiate(carData.carPrefab, position, rotation) as GameObject;
+            __result = UnityEngine.Object.Instantiate(carData.carPrefab, position, rotation);
             CarSpawner.ConfigureCar(__result, carData.infos);
 
-            Main.Log("Car \"" + carPrefabName + "\" is ready for play");
             return false;
         }
     }
