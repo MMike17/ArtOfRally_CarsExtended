@@ -7,6 +7,8 @@ using static Drivetrain;
 
 namespace CarsExtended.Patches
 {
+    // TODO : Change patch class names to make more sense
+
     internal static class CarPatcher
     {
         internal static bool CheckCarInjected(Component obj)
@@ -249,6 +251,15 @@ namespace CarsExtended.Patches
 
             if (__instance.name == "Wing_Back")
                 __instance.WingPosition = Wing.WING_POSITION.REAR;
+        }
+    }
+
+    [HarmonyPatch(typeof(SkidmarksManager), "Awake")]
+    static class SkidmarksManager_Patch
+    {
+        private static void Prefix(SkidmarksManager __instance)
+        {
+            __instance.skidmarks = new GameObject("This will die IMMEDIATELY").AddComponent<Skidmarks>();
         }
     }
 }
