@@ -1,4 +1,6 @@
-﻿using AwesomeTechnologies.TouchReact;
+﻿using System.Collections;
+using AwesomeTechnologies.TouchReact;
+using I2.Loc;
 using UnityEngine;
 
 namespace CarsExtended
@@ -51,13 +53,28 @@ namespace CarsExtended
             CheckAddComponent<HeadlightManager>(lightsTransform.Find("Headlights").gameObject);
             CheckAddComponent<ParticleManager>(carObj.transform.Find("PrefabSpawns").gameObject);
 
-            CheckAddComponent<Setup>(carObj);
+            SetupSetup(CheckAddComponent<Setup>(carObj));
             SetupRenderers(carObj, carInfos);
 
             carObj.SetActive(true);
         }
 
         private static T CheckAddComponent<T>(GameObject obj) where T : Component => obj.GetComponent<T>() ?? obj.AddComponent<T>();
+
+        private static void SetupSetup(Setup setup)
+        {
+            setup.filePath = "This codebase is a joke";
+            setup.carClass = carInfos.data.carClass;
+
+            // Force redo setup because WHY DOESN'T IT WORK ON THE FIRST PASS ?!
+            CoroutineManager.Start(ForceDelayedActivation(setup));
+        }
+
+        private static IEnumerator ForceDelayedActivation(Setup setup)
+        {
+            yield return new WaitForSeconds(1f);
+            setup.LoadSetup();
+        }
 
         private static void SetupRenderers(GameObject carObj, CarInfos carInfos)
         {
