@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections;
+using System.Reflection;
 using AwesomeTechnologies.TouchReact;
 using HarmonyLib;
+using I2.Loc;
 using UnityEngine;
 
 using static Drivetrain;
@@ -32,7 +35,7 @@ namespace CarsExtended.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Setup), "Start")]
+    [HarmonyPatch(typeof(Setup), nameof(Setup.LoadSetup))]
     static class Setup_Patch
     {
         private static void Prefix(Setup __instance)
@@ -98,6 +101,27 @@ namespace CarsExtended.Patches
 
             brakeEffects.RightBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight R");
             brakeEffects.LeftBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight L");
+
+            // WHY THE HELL DO I EVEN NEED THIS ?!
+            CoroutineManager.Start(ForceSetActive());
+
+            IEnumerator ForceSetActive()
+            {
+                float time = Time.time;
+
+                while (true)
+                {
+                    if (!brakeEffects.enabled)
+                        brakeEffects.enabled = true;
+                    else
+                    {
+                        Main.InvokeMethod(brakeEffects, "Awake", BindingFlags.Instance, null);
+                        yield break;
+                    }
+
+                    yield return null;
+                }
+            }
         }
     }
 
