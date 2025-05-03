@@ -13,7 +13,7 @@ namespace CarsExtended
         [Draw(DrawType.Toggle)]
         public bool showMarkers;
         [Draw(DrawType.Toggle)]
-        public bool disableInfoLogs = false;
+        public bool disableInfoLogs = false; // true
 
         public override void Save(ModEntry modEntry) => Save(this, modEntry);
 
