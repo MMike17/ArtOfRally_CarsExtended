@@ -59,14 +59,20 @@ namespace CarsExtended
             carObj.SetActive(true);
         }
 
-        private static T CheckAddComponent<T>(GameObject obj) where T : Component => obj.GetComponent<T>() ?? obj.AddComponent<T>();
+        private static T CheckAddComponent<T>(GameObject obj) where T : Component
+        {
+            if (!obj.TryGetComponent<T>(out T component))
+                component = obj.AddComponent<T>();
+
+            return component;
+        }
 
         private static void SetupSetup(Setup setup)
         {
-            setup.filePath = "This codebase is a joke";
+            setup.filePath = "Placeholder";
             setup.carClass = carInfos.data.carClass;
 
-            // Force redo setup because WHY DOESN'T IT WORK ON THE FIRST PASS ?!
+            // Force redo setup for testing (not sure this is needed)
             CoroutineManager.Start(ForceDelayedActivation(setup));
         }
 
