@@ -16,19 +16,23 @@ namespace CarsExtended.Patches
     {
         internal static bool CheckCarInjected(Component obj)
         {
-            bool check = ChecKName(obj);
+            bool check = CheckName(obj);
 
             // check parent
             if (!check)
-                check = ChecKName(obj.GetComponentInParent<Setup>());
+                check = CheckName(obj.GetComponentInParent<Setup>());
 
             if (check)
                 Main.Log("Configuring " + obj.GetType().Name + " component");
 
             return check;
 
-            bool ChecKName(Component component)
+            bool CheckName(Component component)
             {
+                // that fucking truck with a TouchReactCollider...
+                if (component == null)
+                    return false;
+
                 string carPrefabName = component.name.Replace("(Clone)", "");
                 return ExtraCarManager.IsCarInjected(carPrefabName);
             }
@@ -89,21 +93,28 @@ namespace CarsExtended.Patches
         }
     }
 
+    [HarmonyPatch(typeof(BrakeEffects), "Awake")]
+    static class BrakeEffects_Patch
+    {
+        private static void Prefix(BrakeEffects __instance)
+        {
+            if (!CarPatcher.CheckCarInjected(__instance))
+                return;
+
+            __instance.RightBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight R");
+            __instance.LeftBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight L");
+        }
+    }
+
     [HarmonyPatch(typeof(CarDynamics), "Awake")]
     static class CarDynamics_Patch
     {
         private static void Prefix(CarDynamics __instance)
         {
-            if (!CarPatcher.CheckCarInjected(__instance))
-                return;
-
             BrakeEffects brakeEffects = CarSpawner.brakelightsTransform.GetComponent<BrakeEffects>();
 
-            brakeEffects.RightBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight R");
-            brakeEffects.LeftBrakeLightTransform = CarSpawner.brakelightsTransform.Find("BrakeLight L");
-
-            // WHY THE HELL DO I EVEN NEED THIS ?!
-            CoroutineManager.Start(ForceSetActive());
+            // Sometimes the BrakeEffects component doesn't want to turn on
+            //CoroutineManager.Start(ForceSetActive());
 
             IEnumerator ForceSetActive()
             {
@@ -166,8 +177,11 @@ namespace CarsExtended.Patches
             __instance.HeadlightPosition = __instance.transform.Find("Headlights");
             Transform auxLightsRoot = __instance.transform.Find("AuxHeadlights");
 
-            for (int i = 0; i < auxLightsRoot.childCount - 2; i++)
-                auxLightsRoot.Find("Light" + (i + 1)).tag = Tags.CAR_BREAKABLE_OBJECT;
+            if (auxLightsRoot != null)
+            {
+                for (int i = 0; i < auxLightsRoot.childCount - 2; i++)
+                    auxLightsRoot.Find("Light" + (i + 1)).tag = Tags.CAR_BREAKABLE_OBJECT;
+            }
         }
     }
 
@@ -283,6 +297,7 @@ namespace CarsExtended.Patches
     {
         private static void Prefix(SkidmarksManager __instance)
         {
+            // TODO : This gives empty texture skidmarks
             __instance.skidmarks = new GameObject("This will die IMMEDIATELY").AddComponent<Skidmarks>();
         }
     }
