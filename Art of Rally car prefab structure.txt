@@ -9,14 +9,20 @@ Wing_Back (where you would put a wing)
 Wing_Front (at intersection between front and top of front bumper)
 Wheels
     WheelFL (center of each wheel)
-    WheelFR (center of each wheel)
-    WheelRL (center of each wheel)
-    WheelRR (center of each wheel)
-        WheelRR
-            BrakeRotorRR (brake disc model)
-            w(number of wheel) (wheel model)
+		WheelFL
+			BrakeRotorFL (brake disc model)
+			w0 (wheel model)
         Caliper
             brake caliper (model)
+    WheelFR (center of each wheel)
+		WheelFR
+			w1
+    WheelRL (center of each wheel)
+		WheelRL
+			w2
+    WheelRR (center of each wheel)
+		WheelRR
+			w3
 PrefabSpawns
     Lights
         Brakelights
@@ -32,7 +38,7 @@ PrefabSpawns
             StockHeadlights
                 headlights_stick_front (light bulbs models)
         Backfire
-            Backfire L (pos where backfire effect spawns / up is forward)
+            Backfire L (pos where backfire effect spawns / foward orients effect)
         Nightlight (1/1.5 above the car)
     Particles
         Dust (where dust spawns / center of car slightly back)
